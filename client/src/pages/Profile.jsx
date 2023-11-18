@@ -6,7 +6,10 @@ import { useSelector, useDispatch } from "react-redux";
 import { IoIosAddCircle } from "react-icons/io";
 import { RxAvatar } from "react-icons/rx";
 import { MdAddAPhoto } from "react-icons/md";
-import { postNewProfilePhoto } from "../redux/slices/userSlice";
+import {
+  postNewProfilePhoto,
+  fetchUpdatedUserInfo,
+} from "../redux/slices/userSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -109,6 +112,12 @@ const Profile = () => {
     return filteredUpdates;
   };
 
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(fetchUpdatedUserInfo(user.id));
+    }
+  }, [user?.image_url]);
+
   return user ? (
     <div className="lg:max-w-5xl mx-auto mt-16 mb-8 border-2 border-#FF385C rounded-lg p-10">
       <div className="flex justify-between items-center mb-6 ">
@@ -152,29 +161,55 @@ const Profile = () => {
         <div className="grid gap-10">
           <p className="text-center"> User Profile </p>
           <div className="flex relative justify-center">
-            <div className="translate-x-6 translate-y-5 z-10">
-              <IoIosAddCircle
-                className="cursor-pointer "
-                style={{
-                  fontSize: "3.5rem",
-                  color: isHovered ? "green" : "black",
-                  backgroundColor: "white",
-                  borderRadius: "30px",
-                  width: "3.5rem",
-                }}
-                onClick={showProfilePictureDialog}
-                onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}
-              />
-            </div>
-            <div className="-translate-x-5">
-              {user.image_url ? (
-                <div className="w-8 ">{user.image_url}</div>
-              ) : (
-                <RxAvatar style={{ fontSize: "12rem" }} />
-              )}
-            </div>
+            {user?.image_url ? (
+              <div>
+                <div className="-translate-x-5 translate-y-16 z-10">
+                  <IoIosAddCircle
+                    className="cursor-pointer "
+                    style={{
+                      fontSize: "4.5rem",
+                      color: isHovered ? "green" : "black",
+                      backgroundColor: "white",
+                      borderRadius: "50px",
+                      width: "4.5rem",
+                    }}
+                    onClick={showProfilePictureDialog}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  />
+                </div>
+                <div className="w-64 h-64 rounded-3xl overflow-hidden">
+                  <img
+                    src={user?.image_url}
+                    alt="User Profile"
+                    className="w-full h-full object-cover rounded-full"
+                  />
+                </div>
+              </div>
+            ) : (
+              <div>
+                <div className="-translate-x-2 translate-y-16 z-10">
+                  <IoIosAddCircle
+                    className="cursor-pointer "
+                    style={{
+                      fontSize: "4.5rem",
+                      color: isHovered ? "green" : "black",
+                      backgroundColor: "white",
+                      borderRadius: "50px",
+                      width: "4.5rem",
+                    }}
+                    onClick={showProfilePictureDialog}
+                    onMouseEnter={() => setIsHovered(true)}
+                    onMouseLeave={() => setIsHovered(false)}
+                  />
+                </div>
+                <div>
+                  <RxAvatar style={{ fontSize: "14rem" }} />
+                </div>
+              </div>
+            )}
           </div>
+
           {isUploadingPhoto ? (
             <div
               className="flex relative"
