@@ -14,10 +14,7 @@ import "./strategies/local.js";
 import { conString } from "./config/database.js";
 import connectPgSimple from "connect-pg-simple";
 
-const CLIENT_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.PROD_CLIENT_URL
-    : "http://localhost:5173";
+const CLIENT_URL = process.env.PROD_CLIENT_URL
 
 const API_URL =
   process.env.NODE_ENV === "production"
