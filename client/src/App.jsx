@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useRoutes } from "react-router-dom";
-import Listings from "./pages/Listings";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import "./App.css";
+import Listings from "./pages/Listings";
 import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
 import IndividualListings from "./pages/IndividualListings";
@@ -25,29 +23,25 @@ function App() {
     fetchListings();
   }, []);
 
-  // Sets up routes
-  let element = useRoutes([
-    {
-      path: "/",
-      element: <Listings data={listings} />,
-    },
-  ]);
-
   return (
     <div className="App">
-      <header>
-        <Navbar isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
-      </header>
-      <div
-        className={`main-content ${isModalOpen ? "blur-3xl bg-white/30" : ""}`}
-      >
-        {element}
-      </div>
-      <Routes>
-        <Route path="/profile/:id" element={<Profile />} />
-        <Route path="/policy" element={<Policies/>} />
-        <Route path="/listings/:id" component={IndividualListings} />
-      </Routes>
+      <Router>
+        <header>
+          <Navbar isModalOpen={isModalOpen} setIsModalOpen={setIsModalOpen} />
+        </header>
+        <div
+          className={`main-content ${
+            isModalOpen ? "blur-3xl bg-white/30" : ""
+          }`}
+        >
+          <Routes>
+            <Route path="/" element={<Listings data={listings} />} />
+            <Route path="/profile/:id" element={<Profile />} />
+            <Route path="/policy" element={<Policies />} />
+            <Route path="/listings/:id" component={IndividualListings} />
+          </Routes>
+        </div>
+      </Router>
     </div>
   );
 }

@@ -83,7 +83,7 @@ export const fetchUpdatedUserInfo = createAsyncThunk(
       const res = await axios.get(`${API_URL}/api/users/${userId}`, {
         withCredentials: true,
       });
-
+      console.log(res.data, "res.data from fetchUpdatedUserInfo");
       // Dispatch the action to update the user in the Redux store
       dispatch(setLoggedInUser(res.data));
     } catch (error) {
@@ -104,8 +104,8 @@ export const postNewProfilePhoto = createAsyncThunk(
         { id: userId, image_url: newImageUrl },
         { withCredentials: true }
       );
+      dispatch(updateLoggedInUserImageUrl(newImageUrl));
       // Dispatch the fetchUpdatedUserInfo thunk to refetch the user details
-      dispatch(fetchUpdatedUserInfo(userId));
     } catch (error) {
       console.error("Error posting new profile photo:", error);
       throw error;

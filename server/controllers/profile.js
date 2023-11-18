@@ -1,5 +1,10 @@
 import { pool } from "../config/database.js";
 
+const CLIENT_URL =
+  process.env.NODE_ENV === "production"
+    ? process.env.PROD_CLIENT_URL
+    : "http://localhost:5173";
+
 const updateUserProfile = async (req, res) => {
   try {
     //get user data from the request
@@ -44,23 +49,37 @@ const updateUserProfile = async (req, res) => {
 const updateUserProfilePhoto = async (req, res) => {
   try {
     //update the users email:
-    const { id, newImageUrl } = req.body; //assuming the new email is sent in the request body
+    console.log(req.body, "updating from controller photo");
+    const { id, image_url } = req.body; //assuming the new email is sent in the request body
 
     //update user's email in the database:
     const updateQuery = "UPDATE users SET image_url = $1 WHERE id = $2";
-    const updateValues = [newImageUrl, id];
-
+    const updateValues = [image_url, id];
+    await pool.query("BEGIN"); // Start a transaction
+    console.log(updateValues, "updateValues");
     const result = await pool.query(updateQuery, updateValues);
 
     if (result.rowCount > 0) {
-      res.json({ message: "Profile updated successfully. " });
+      await pool.query("COMMIT"); // Commit the transaction on success
+      const updatedUserQuery = "SELECT id FROM users WHERE id = $1";
+      const updatedUserResult = await pool.query(updatedUserQuery, [id]);
+
+      const updatedUserId = updatedUserResult.rows[0].id;
+
+      res.status(200).json({
+        message: "Profile updated successfully.",
+        id: updatedUserId,
+        redirect: `https://${CLIENT_URL}/profile/${updatedUserId}`,
+      });
     } else {
+      console.error("Profile update failed:", result);
+      await pool.query("ROLLBACK"); // Rollback the transaction on failure
       res.status(500).json({ error: "Profile update failed." });
     }
-
-    // res.json({ message: "Profile updated successfully." })
   } catch (error) {
-    res.status(500).json({ error: "Internal server error " });
+    console.error("Error updating profile:", error);
+    await pool.query("ROLLBACK"); // Rollback on error
+    res.status(500).json({ error: "Internal server error." });
   }
 };
 
