@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import listings from '../jsons/listings.json';
+import { Link } from 'react-router-dom'
 
 function ProfileListing() {
   const [showForm, setShowForm] = useState(false);
@@ -23,9 +24,9 @@ function ProfileListing() {
     }));
   };
 
-  const handleEditListing = (index) => {
-    console.log(`Edit clicked for index: ${index}`);
-  };
+  // const handleEditListing = (index) => {
+  //   console.log(`Edit clicked for index: ${index}`);
+  // };
 
   const handleDeleteListing = (index) => {
     const updatedListings = [...userListings];
@@ -128,7 +129,12 @@ function ProfileListing() {
 <ul className="grid grid-cols-1 gap-8  lg:grid-cols-3 mt-10">
   {userListings.map((userListing, index) => (
     <li key={index} className="bg-white p-8 rounded-md shadow-md w-full mb-4">
-      <h2 className="text-2xl font-semibold mb-2">{userListing.title}</h2>
+      
+      
+      {/* <Link to={`/listings/${userListing.id}`}> */}
+      <h2 className="text-2xl font-semibold mb-2" style={{cursor:"pointer"}}>{userListing.title}</h2>
+      {/* </Link> */}
+      
       {/* <p className="text-gray-600 text-lg">ID: {userListing.id}</p> */}
       <p className="text-gray-600 text-lg">Price per night: ${parseFloat(userListing.price).toFixed(2)}</p>
       {userListing.img && (
@@ -139,15 +145,15 @@ function ProfileListing() {
         />
       )}
       <div className="flex justify-between mt-4">
-        <button
+        {/* <button
           onClick={() => handleEditListing(index)}
           className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
         >
           Edit
-        </button>
+        </button> */}
         <button
           onClick={() => handleDeleteListing(index)}
-          className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600"
+          className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 w-full"
         >
           Delete
         </button>

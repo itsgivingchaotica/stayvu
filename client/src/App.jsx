@@ -3,6 +3,8 @@ import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Listings from "./pages/Listings";
 import Navbar from "./components/Navbar";
 import Profile from "./pages/Profile";
+import IndividualListings from "./pages/IndividualListings";
+import Policies from "./pages/Policies";
 
 function App() {
   const [listings, setListings] = useState([]);
@@ -35,6 +37,8 @@ function App() {
           <Routes>
             <Route path="/" element={<Listings data={listings} />} />
             <Route path="/profile/:id" element={<Profile />} />
+            <Route path="/policy" element={<Policies />} />
+            <Route path="/listings/:id" component={IndividualListings} />
           </Routes>
         </div>
       </Router>
