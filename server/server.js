@@ -42,7 +42,7 @@ app.use(
 // app.use(cors());
 app.use(
   cors({
-    origin: CLIENT_URL,
+    origin: "https://stayvue.up.railway.app",
     methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
     credentials: true,
   })
