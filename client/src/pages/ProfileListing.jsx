@@ -1,14 +1,14 @@
-import React, { useState } from 'react';
-import listings from '../jsons/listings.json';
-import { Link } from 'react-router-dom'
+import React, { useEffect, useState } from "react";
+import listings from "../jsons/listings.json";
+import { Link } from "react-router-dom";
 
 function ProfileListing() {
   const [showForm, setShowForm] = useState(false);
   const [formData, setFormData] = useState({
-    title: '',
-    id: '',
-    price: '',
-    img: '',
+    title: "",
+    id: "",
+    price: "",
+    img: "",
   });
   const [userListings, setUserListings] = useState([]);
 
@@ -33,7 +33,7 @@ function ProfileListing() {
     updatedListings.splice(index, 1);
     setUserListings(updatedListings);
   };
-  
+
   const handleFormSubmit = (e) => {
     e.preventDefault();
 
@@ -42,25 +42,25 @@ function ProfileListing() {
 
     // Clear the form data
     setFormData({
-      title: '',
-      id: '',
-      price: '',
-      img: '',
+      title: "",
+      id: "",
+      price: "",
+      img: "",
     });
 
     // Hide the form
-    setShowForm(false);  
-  }
-  
+    setShowForm(false);
+  };
+
   return (
     <div className="max-w mx-auto mt-8">
-      <h1 className='text-center mb-4'>Listings</h1>
+      <h1 className="text-center mb-4">Listings</h1>
 
       <button
         onClick={handleAddListingClick}
         className="w-full mb-10 bg-red-500 text-white rounded-md px-4 py-2 hover:bg-red-600 focus:outline-none focus:ring focus:border-blue-300"
       >
-        {showForm ? 'Hide Form' : 'Add Listing'}
+        {showForm ? "Hide Form" : "Add Listing"}
       </button>
 
       {showForm && (
@@ -91,7 +91,9 @@ function ProfileListing() {
               placeholder="Enter ID"
             /> */}
 
-            <label htmlFor="price" className='mt-4'>Price Per Night: </label>
+            <label htmlFor="price" className="mt-4">
+              Price Per Night:{" "}
+            </label>
             <input
               required
               type="number"
@@ -103,7 +105,9 @@ function ProfileListing() {
               placeholder="Enter price per night"
             />
 
-            <label htmlFor="img" className='mt-4'>Image: </label>
+            <label htmlFor="img" className="mt-4">
+              Image:{" "}
+            </label>
             <input
               required
               type="text"
@@ -122,62 +126,74 @@ function ProfileListing() {
               Add Listing
             </button>
           </form>
-
         </div>
       )}
 
-<ul className="grid grid-cols-1 gap-8  lg:grid-cols-3 mt-10">
-  {userListings.map((userListing, index) => (
-    <li key={index} className="bg-white p-8 rounded-md shadow-md w-full mb-4">
-      
-      
-      {/* <Link to={`/listings/${userListing.id}`}> */}
-      <h2 className="text-2xl font-semibold mb-2" style={{cursor:"pointer"}}>{userListing.title}</h2>
-      {/* </Link> */}
-      
-      {/* <p className="text-gray-600 text-lg">ID: {userListing.id}</p> */}
-      <p className="text-gray-600 text-lg">Price per night: ${parseFloat(userListing.price).toFixed(2)}</p>
-      {userListing.img && (
-        <img
-          src={userListing.img}
-          alt={`Image for ${userListing.title}`}
-          className="mt-4 w-full h-48 object-cover rounded-md"
-        />
-      )}
-      <div className="flex justify-between mt-4">
-        {/* <button
+      <ul className="grid grid-cols-1 gap-8  lg:grid-cols-3 mt-10">
+        {userListings.map((userListing, index) => (
+          <li
+            key={index}
+            className="bg-white p-8 rounded-md shadow-md w-full mb-4"
+          >
+            {/* <Link to={`/listings/${userListing.id}`}> */}
+            <h2
+              className="text-2xl font-semibold mb-2"
+              style={{ cursor: "pointer" }}
+            >
+              {userListing.title}
+            </h2>
+            {/* </Link> */}
+
+            {/* <p className="text-gray-600 text-lg">ID: {userListing.id}</p> */}
+            <p className="text-gray-600 text-lg">
+              Price per night: ${parseFloat(userListing.price).toFixed(2)}
+            </p>
+            {userListing.img && (
+              <img
+                src={userListing.img}
+                alt={`Image for ${userListing.title}`}
+                className="mt-4 w-full h-48 object-cover rounded-md"
+              />
+            )}
+            <div className="flex justify-between mt-4">
+              {/* <button
           onClick={() => handleEditListing(index)}
           className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
         >
           Edit
         </button> */}
-        <button
-          onClick={() => handleDeleteListing(index)}
-          className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 w-full"
-        >
-          Delete
-        </button>
-      </div>
-    </li>
-  ))}
-
+              <button
+                onClick={() => handleDeleteListing(index)}
+                className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 w-full"
+              >
+                Delete
+              </button>
+            </div>
+          </li>
+        ))}
 
         {/* Render existing listings */}
-        
-        {listings.map((listing, index) => (
-  <li key={index} className="bg-white p-6 rounded-md shadow-md w-full mb-4">
-    <h2 className="text-xl font-semibold mb-2">{listing.title}</h2>
-    {/* <p className="text-gray-600">Property ID: {listing.property_id}</p> */}
-    <p className="text-gray-600">Price per night: {listing.price_per_night}</p>
-    {listing.image_url && (
-      <img src={listing.image_url} alt={`Image for ${listing.title}`} className="mt-4 w-full h-48 object-cover rounded-md" />
-    )}
-  </li>
-))}
 
-      
-      </ul> 
-      
+        {listings.map((listing, index) => (
+          <li
+            key={index}
+            className="bg-white p-6 rounded-md shadow-md w-full mb-4"
+          >
+            <h2 className="text-xl font-semibold mb-2">{listing.title}</h2>
+            {/* <p className="text-gray-600">Property ID: {listing.property_id}</p> */}
+            <p className="text-gray-600">
+              Price per night: {listing.price_per_night}
+            </p>
+            {listing.image_url && (
+              <img
+                src={listing.image_url}
+                alt={`Image for ${listing.title}`}
+                className="mt-4 w-full h-48 object-cover rounded-md"
+              />
+            )}
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
