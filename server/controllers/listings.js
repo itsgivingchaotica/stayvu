@@ -45,9 +45,24 @@ const getUserListings = async (request, response) => {
   }
 };
 
+const getListingsByDate = async (request, response) => {
+  try {
+    const startDate = request.params.startDate;
+    const endDate = request.params.endDate;
+    const results = await pool.query(
+      `SELECT listings.*, properties.*, propertyAmenities.*, (SELECT json_agg(listingAvailability.*) FROM listingAvailability WHERE listingAvailability.listing_id = listings.id) AS availability, json_agg(DISTINCT listingImages.*) AS images FROM listings INNER JOIN properties ON properties.id = listings.property_id INNER JOIN propertyAmenities ON properties.id = propertyAmenities.property_id LEFT JOIN listingImages ON properties.id = listingImages.property_id WHERE listings.id IN (SELECT listing_id FROM listingAvailability WHERE start_availability <= $2 AND end_availability >= $1 OR start_availability BETWEEN $1 AND $2 OR end_availability BETWEEN $1 AND $2) GROUP BY listings.id, properties.id, propertyAmenities.id;
+`,
+      [startDate, endDate]
+    );
+    console.log(results.rows);
+    response.status(200).json(results.rows);
+  } catch (error) {
+    response.status(409).json({ error: error.message });
+  }
+};
+
 //get single listing
 const getListingById = async (request, response) => {
-  console.log(request.cookies);
   try {
     const id = parseInt(request.params.id);
     const results = await pool.query("SELECT * FROM listings WHERE id = $1", [
@@ -146,4 +161,5 @@ export default {
   postNewListing,
   postNewListingAvailability,
   postNewListingImages,
+  getListingsByDate,
 };
