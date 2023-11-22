@@ -9,8 +9,6 @@ passport.use(
       usernameField: "email",
     },
     async (email, password, done) => {
-      console.log(email);
-      console.log(password);
       try {
         if (!email || !password) {
           return response.status(400).json({ message: "Missing credentials" });

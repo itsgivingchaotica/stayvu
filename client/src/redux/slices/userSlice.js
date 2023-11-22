@@ -36,17 +36,13 @@ export const authRegister = createAsyncThunk(
     { first_name, last_name, zipcode, phone, user_name, email, password },
     { dispatch }
   ) => {
-    console.log("attempt to register");
     const apiUrl = `${API_URL}/api/auth/register`;
-    console.log(apiUrl);
     try {
       const res = await axios.post(
         `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
         { first_name, last_name, zipcode, phone, user_name, email, password },
         { withCredentials: true }
       );
-
-      console.log(res.data.user);
       dispatch(setLoggedInUser(res.data.user));
       dispatch(setEmail(res.data.user.email));
       dispatch(setAuthenticated(true));
@@ -79,12 +75,9 @@ export const fetchUpdatedUserInfo = createAsyncThunk(
   "user/fetchUpdatedUserInfo",
   async (userId, { dispatch }) => {
     try {
-      // Make your API request to fetch updated user information
       const res = await axios.get(`${API_URL}/api/users/${userId}`, {
         withCredentials: true,
       });
-      console.log(res.data, "res.data from fetchUpdatedUserInfo");
-      // Dispatch the action to update the user in the Redux store
       dispatch(setLoggedInUser(res.data));
     } catch (error) {
       console.error("Error fetching updated user information:", error);
@@ -97,8 +90,6 @@ export const postNewProfilePhoto = createAsyncThunk(
   "user/postNewProfilePhoto",
   async ({ userId, newImageUrl }, { dispatch }) => {
     try {
-      // Make your API request
-      console.log(newImageUrl, "image url from redux");
       const res = await axios.patch(
         `${API_URL}/api/profile/new-profile-photo`,
         { id: userId, image_url: newImageUrl },

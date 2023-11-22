@@ -1,16 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import listings from "../jsons/listings.json";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserProperties } from "../redux/slices/propertiesSlice";
 
-function ProfileListing() {
+function ProfileProperty() {
   const [showForm, setShowForm] = useState(false);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user?.loggedInUser);
+  const userProperties = useSelector(
+    (state) => state.properties?.userProperties
+  );
   const [formData, setFormData] = useState({
-    title: "",
-    id: "",
-    price: "",
-    img: "",
+    host_id: user?.id,
+    address1: "",
+    address2: "",
+    city: "",
+    state: "",
+    country: "",
+    zipcode: "",
+    num_beds: "",
+    num_baths: "",
+    num_bedrooms: "",
+    property_type: "",
   });
-  const [userListings, setUserListings] = useState([]);
 
   const handleAddListingClick = () => {
     setShowForm(!showForm);
@@ -51,6 +64,10 @@ function ProfileListing() {
     // Hide the form
     setShowForm(false);
   };
+
+  useEffect(() => {
+    dispatch(fetchUserListings({ userId: user?.id }));
+  }, [listings?.userListings]);
 
   return (
     <div className="max-w mx-auto mt-8">
@@ -198,4 +215,4 @@ function ProfileListing() {
   );
 }
 
-export default ProfileListing;
+export default ProfileProperty;

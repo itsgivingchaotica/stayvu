@@ -25,10 +25,6 @@ const ListingCarousel = ({ images }) => {
     setCurrentIndex(imageIndex);
   };
 
-  if (images) {
-    console.log(images[currentIndex].image_url);
-  }
-
   return (
     <div className="max-w-[3400px] w-full px-4 pt-4 relative group">
       <div

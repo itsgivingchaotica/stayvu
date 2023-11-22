@@ -1,16 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import listings from "../jsons/listings.json";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchUserListings } from "../redux/slices/listingsSlice";
 
 function ProfileListing() {
   const [showForm, setShowForm] = useState(false);
+  const dispatch = useDispatch();
+  const user = useSelector((state) => state.user?.loggedInUser);
+  const userListings = useSelector((state) => state.listings?.userListings);
   const [formData, setFormData] = useState({
     title: "",
-    id: "",
+    id: user?.id,
     price: "",
-    img: "",
+    img_url: "",
   });
-  const [userListings, setUserListings] = useState([]);
 
   const handleAddListingClick = () => {
     setShowForm(!showForm);
@@ -51,6 +55,10 @@ function ProfileListing() {
     // Hide the form
     setShowForm(false);
   };
+
+  useEffect(() => {
+    dispatch(fetchUserListings({ userId: user?.id }));
+  }, [listings?.userListings]);
 
   return (
     <div className="max-w mx-auto mt-8">

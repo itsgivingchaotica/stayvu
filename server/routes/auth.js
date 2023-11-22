@@ -123,11 +123,20 @@ router.post("/register", async (request, response) => {
             hashedPassword,
           ]
         );
+        // Log in the user immediately after successful registration
+        request.login(newUser.rows[0], (err) => {
+          if (err) {
+            return response.status(500).json({ error: "Login failed" });
+          }
 
-        // Send the user data in the response
-        response
-          .status(201)
-          .json({ message: "Registered successfully", user: newUser.rows[0] });
+          // Send the user data in the response
+          return response
+            .status(201)
+            .json({
+              message: "Registered and logged in successfully",
+              user: newUser.rows[0],
+            });
+        });
       } catch (error) {
         response.status(500).json({ error: error.message });
       }

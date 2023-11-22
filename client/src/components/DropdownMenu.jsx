@@ -1,9 +1,10 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { RxAvatar, RxDropdownMenu } from "react-icons/rx";
 import { Link } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { authLogOut } from "../redux/slices/userSlice";
 import Policies from "../pages/Policies";
+import { fetchUpdatedUserInfo } from "../redux/slices/userSlice";
 
 const DropdownMenu = ({ toggleDropdown, toggleLoginModal, isDropdownOpen }) => {
   const user = useSelector((state) => state.user?.loggedInUser);
@@ -13,7 +14,12 @@ const DropdownMenu = ({ toggleDropdown, toggleLoginModal, isDropdownOpen }) => {
     await dispatch(authLogOut());
   };
 
-  console.log(user);
+  useEffect(() => {
+    if (user?.id) {
+      dispatch(fetchUpdatedUserInfo(user.id));
+    }
+  }, [user?.id]);
+
   return (
     <div className="flex">
       <div className="relative items-center">
@@ -60,10 +66,7 @@ const DropdownMenu = ({ toggleDropdown, toggleLoginModal, isDropdownOpen }) => {
                   </Link>
                 </li>
                 <li className="table-row hover:bg-button-color hover:text-white">
-                  <button
-                    className="block px-4 py-2 hover-bg-gray-100 dark-hover-bg-gray-600 dark-hover-text-white"
-                    onClick={toggleLoginModal}
-                  >
+                  <button className="block px-4 py-2 hover-bg-gray-100 dark-hover-bg-gray-600 dark-hover-text-white">
                     Add Listing
                   </button>
                 </li>
@@ -77,12 +80,15 @@ const DropdownMenu = ({ toggleDropdown, toggleLoginModal, isDropdownOpen }) => {
                 </li>
                 <li className="table-row hover:bg-button-color hover:text-white">
                   <Link to="/policy">
-                  <button
-                    className="block px-4 py-2 hover-bg-gray-100 dark-hover-bg-gray-600 dark-hover-text-white"
-                    onClick={toggleLoginModal}
-                  >
-                    Policies
-                  </button>
+                    <button
+                      className="block px-4 py-2 hover-bg-gray-100 dark-hover-bg-gray-600 dark-hover-text-white"
+                      onClick={() => {
+                        // toggleLoginModal();
+                        toggleDropdown();
+                      }}
+                    >
+                      Policies
+                    </button>
                   </Link>
                 </li>
               </ul>
