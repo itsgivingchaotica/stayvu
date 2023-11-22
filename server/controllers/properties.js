@@ -22,10 +22,8 @@ const getUserProperties = async (request, response) => {
 };
 
 const getPropertyById = async (request, response) => {
-  console.log("hello");
   try {
     const propertyId = parseInt(request.params.propertyId);
-    console.log("hello world");
     const singleProperty = await pool.query(
       "SELECT * FROM properties WHERE id = $1",
       [propertyId]
