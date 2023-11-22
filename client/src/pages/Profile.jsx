@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import ProfileListing from "./ProfileListing";
 import { useParams } from "react-router-dom";
 // import UserIcon from "../jsons/UserIcon.json";
@@ -14,7 +14,6 @@ import {
 const Profile = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  console.log(id, "user IDDDD");
   const [activeTab, setActiveTab] = useState("user"); // 'user' or 'listings'
   const [userData, setUserData] = useState({
     firstName: "",
@@ -36,7 +35,6 @@ const Profile = () => {
   const [isPhotoIconHovered, setIsPhotoIconHovered] = useState(false);
 
   const user = useSelector((state) => state.user?.loggedInUser);
-  console.log("User:", user);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -54,7 +52,6 @@ const Profile = () => {
   const setProfilePhoto = () => {
     if (user && user.id && imageUrl) {
       // Only proceed if user.id and imageUrl are present
-      console.log("Hello, I'm updating the photo");
       dispatch(postNewProfilePhoto({ userId: user?.id, newImageUrl: imageUrl }))
         .then(() => {
           // Additional logic after the photo is updated successfully
