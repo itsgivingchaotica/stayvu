@@ -49,14 +49,12 @@ const updateUserProfile = async (req, res) => {
 const updateUserProfilePhoto = async (req, res) => {
   try {
     //update the users email:
-    console.log(req.body, "updating from controller photo");
     const { id, image_url } = req.body; //assuming the new email is sent in the request body
 
     //update user's email in the database:
     const updateQuery = "UPDATE users SET image_url = $1 WHERE id = $2";
     const updateValues = [image_url, id];
     await pool.query("BEGIN"); // Start a transaction
-    console.log(updateValues, "updateValues");
     const result = await pool.query(updateQuery, updateValues);
 
     if (result.rowCount > 0) {
