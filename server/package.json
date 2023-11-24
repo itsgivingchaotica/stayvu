@@ -5,7 +5,7 @@
   "main": "server.js",
   "type": "module",
   "scripts": {
-    "start": "nodemon --require dotenv/config server.js",
+    "start": "nodemon --require dotenv/config --omit-dev server.js",
     "reset": "cd config && node --require dotenv/config reset.js"
   },
   "keywords": [],
