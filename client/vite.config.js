@@ -7,7 +7,7 @@ export default ({ mode }) => {
     server: {
       proxy: {
         "/api": {
-          target: mode === "production" ? "https://stayvue.up.railway.app" : "http://localhost:3001",
+          target: mode === "production" ? "https://stayvue-server.up.railway.app" : "http://localhost:3001",
           changeOrigin: true,
           rewrite: (path) => path.replace(/^\/api/, ""),
         },
