@@ -8,6 +8,8 @@ const API_URL =
     ? import.meta.env.VITE_SERVER_URL
     : "http://localhost:3001";
 
+console.log(API_URL,'from redux');
+
 export const authLogIn = createAsyncThunk(
   "user/authLogIn",
   async ({ email, password }, { dispatch }) => {
