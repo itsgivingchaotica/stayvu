@@ -80,6 +80,7 @@ app.use("/api/properties", propertiesRoutes);
 app.use("/api/profile", profileRoutes);
 app.use("/api/users", userRoutes);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+server.listen(3001, 'localhost'); // or server.listen(3001, '0.0.0.0'); for all interfaces
+server.on('listening', function() {
+    console.log('Express server started on port %s at %s', server.address().port, server.address().address);
 });
