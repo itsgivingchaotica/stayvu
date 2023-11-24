@@ -22,7 +22,7 @@ const API_URL =
     : process.env.DEV_SERVER_URL;
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT = process.env.PGPORT || 3001;
 // const memoryStore = new session.MemoryStore();
 const PostgresqlStore = connectPgSimple(session);
 const sessionStore = new PostgresqlStore({
