@@ -14,6 +14,10 @@ function App() {
       ? import.meta.env.VITE_SERVER_URL
       : "http://localhost:3001";
 
+  console.log('MODE:', import.meta.env.MODE);
+  console.log('VITE_MODE:', import.meta.env.VITE_MODE);
+  console.log('VITE_SERVER_URL:', import.meta.env.VITE_SERVER_URL);
+
   useEffect(() => {
     const fetchListings = async () => {
       const response = await fetch(`${API_URL}/api`);
