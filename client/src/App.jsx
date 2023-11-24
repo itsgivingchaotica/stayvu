@@ -10,7 +10,7 @@ function App() {
   const [listings, setListings] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const API_URL =
-    process.env.NODE_ENV === "production"
+    import.meta.env.MODE === "production"
       ? import.meta.env.VITE_SERVER_URL
       : "http://localhost:3001";
 
