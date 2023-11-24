@@ -5,6 +5,8 @@ import cloneDeep from "lodash/cloneDeep";
 
 const API_URL = import.meta.env.VITE_SERVER_URL
 
+console.log(API_URL,'from redux');
+
 export const authLogIn = createAsyncThunk(
   "user/authLogIn",
   async ({ email, password }, { dispatch }) => {
