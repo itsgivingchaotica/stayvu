@@ -82,5 +82,5 @@ app.use("/api/users", userRoutes);
 
 server.listen(3001, 'localhost'); // or server.listen(3001, '0.0.0.0'); for all interfaces
 server.on('listening', function() {
-    console.log('Express server started on port %s at %s', server.address().port, server.address().address);
+    console.log('Express server started on port %s at %s', app.address().port, app.address().address);
 });
