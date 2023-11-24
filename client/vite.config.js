@@ -1,14 +1,22 @@
-import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
+import { defineConfig } from "vite";
 
-// https://vitejs.dev/config/
-export default defineConfig({
-  plugins: [react()],
-  server: {
-    proxy: {
-      "/api": {
-        target: "http://localhost:3001",
+export default ({ mode }) => {
+  const isProduction = mode === "production";
+  const apiUrl = import.meta.env.VITE_SERVER_URL || "http://localhost:3001";
+
+  console.log("API_URL:", apiUrl);
+
+  return defineConfig({
+    plugins: [react()],
+    server: {
+      proxy: {
+        "/api": {
+          target: apiUrl,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
       },
     },
-  },
-});
+  });
+};
