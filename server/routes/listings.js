@@ -6,17 +6,17 @@ const router = express.Router();
 
 router.get("/", ListingsController.getAllListings);
 router.get("/:id", ListingsController.getListingById);
+router.get("/listings", (request, response) => {});
+router.get("/listings/all/user/:userId", ListingsController.getUserListings);
 router.get(
   "/listings/:startDate/:endDate",
   ListingsController.getListingsByDate
 );
-router.get("/listings", (request, response) => {});
 router.post("/listings/:propertyId", ListingsController.postNewListing);
-router.get("/listings/:userId/all", ListingsController.getUserListings);
-router.post(
-  "/listings/images/:userId",
-  ListingsController.postNewListingImages
-);
+// router.post(
+//   "/listings/images/:userId",
+//   ListingsController.postNewListingImages
+// );
 router.post(
   "/listings/availability/:listingId",
   ListingsController.postNewListingAvailability
