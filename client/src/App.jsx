@@ -9,6 +9,7 @@ import Policies from "./pages/Policies";
 function App() {
   const [listings, setListings] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
   const API_URL =
     process.env.NODE_ENV === "production"
       ? import.meta.env.VITE_SERVER_URL
@@ -16,7 +17,9 @@ function App() {
 
   useEffect(() => {
     const fetchListings = async () => {
+      // console.log("fetching listings");
       const response = await fetch(`${API_URL}/api`);
+      // console.log(response);
       const data = await response.json();
       setListings(data);
     };
