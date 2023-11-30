@@ -1,29 +1,19 @@
-import React, { useState } from "react";
-import listings from "../jsons/listings.json";
-import { Link } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { fetchUserListings } from "../redux/slices/listingsSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUserProperties } from "../redux/slices/propertiesSlice";
+import { Link } from "react-router-dom";
 
-function ProfileProperty() {
+const ProfileListings = () => {
   const [showForm, setShowForm] = useState(false);
+  const [formData, setFormData] = useState({
+    title: "",
+    id: "",
+    price: "",
+    img: "",
+  });
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user?.loggedInUser);
-  const userProperties = useSelector(
-    (state) => state.properties?.userProperties
-  );
-  const [formData, setFormData] = useState({
-    host_id: user?.id,
-    address1: "",
-    address2: "",
-    city: "",
-    state: "",
-    country: "",
-    zipcode: "",
-    num_beds: "",
-    num_baths: "",
-    num_bedrooms: "",
-    property_type: "",
-  });
+  const userListings = useSelector((state) => state.listings?.userListings);
 
   const handleAddListingClick = () => {
     setShowForm(!showForm);
@@ -67,7 +57,7 @@ function ProfileProperty() {
 
   useEffect(() => {
     dispatch(fetchUserListings({ userId: user?.id }));
-  }, [listings?.userListings]);
+  }, []);
 
   return (
     <div className="max-w mx-auto mt-8">
@@ -188,31 +178,9 @@ function ProfileProperty() {
             </div>
           </li>
         ))}
-
-        {/* Render existing listings */}
-
-        {listings.map((listing, index) => (
-          <li
-            key={index}
-            className="bg-white p-6 rounded-md shadow-md w-full mb-4"
-          >
-            <h2 className="text-xl font-semibold mb-2">{listing.title}</h2>
-            {/* <p className="text-gray-600">Property ID: {listing.property_id}</p> */}
-            <p className="text-gray-600">
-              Price per night: {listing.price_per_night}
-            </p>
-            {listing.image_url && (
-              <img
-                src={listing.image_url}
-                alt={`Image for ${listing.title}`}
-                className="mt-4 w-full h-48 object-cover rounded-md"
-              />
-            )}
-          </li>
-        ))}
       </ul>
     </div>
   );
-}
+};
 
-export default ProfileProperty;
+export default ProfileListings;

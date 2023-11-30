@@ -9,16 +9,19 @@ import Policies from "./pages/Policies";
 function App() {
   const [listings, setListings] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const API_URL =
-    import.meta.env.MODE === "production"
-      ? import.meta.env.VITE_SERVER_URL
-      : "http://localhost:3001";
 
-  console.log(API_URL,'from app');
+  const API_URL =
+    process.env.NODE_ENV === "production"
+      ? import.meta.env.VITE_SERVER_URL
+      : import.meta.env.VITE_BACKEND_URL;
+
+  console.log(API_URL, "from app");
 
   useEffect(() => {
     const fetchListings = async () => {
+      // console.log("fetching listings");
       const response = await fetch(`${API_URL}/api`);
+      // console.log(response);
       const data = await response.json();
       setListings(data);
     };

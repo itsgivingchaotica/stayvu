@@ -1,26 +1,44 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { set } from "lodash";
 
 const API_URL =
   process.env.NODE_ENV === "production"
     ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:3001";
+    : import.meta.env.VITE_BACKEND_URL;
 
 export const filterListingsBySearch = createAsyncThunk(
   "listings/filterListingsBySearch",
   async ({ startDate, endDate }, { dispatch }) => {
-    console.log("Action Creator: Start Date -", startDate);
-    console.log("Action Creator: End Date -", endDate);
+    // console.log("Action Creator: Start Date -", startDate);
+    // console.log("Action Creator: End Date -", endDate);
     try {
       const res = await axios.get(
         `${API_URL}/api/listings/${startDate}/${endDate}`,
         {},
         { withCredentials: true }
       );
-      console.log(`${API_URL}/api/listings/${startDate}/${endDate}`);
+
       dispatch(setFilteredListings(res.data));
       //   const userData = res.data;
       //   return userData;
+    } catch (error) {
+      console.error("Error fetching user properties:", error);
+      throw error;
+    }
+  }
+);
+
+export const fetchUserListings = createAsyncThunk(
+  "listings/fetchUserListings",
+  async ({ userId }, { dispatch }) => {
+    try {
+      const res = await axios.get(
+        `${API_URL}/api/listings/all/user/${userId}`,
+        {},
+        { withCredentials: true }
+      );
+      dispatch(setUserListings(res.data));
     } catch (error) {
       console.error("Error fetching user properties:", error);
       throw error;
@@ -117,5 +135,10 @@ const listingsSlice = createSlice({
   },
 });
 
-export const { setFilteredListings, setError, clearFilteredListings } = listingsSlice.actions;
+export const {
+  setFilteredListings,
+  setError,
+  clearFilteredListings,
+  setUserListings,
+} = listingsSlice.actions;
 export default listingsSlice.reducer;

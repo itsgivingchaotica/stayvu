@@ -2,29 +2,17 @@ import { pool } from "../config/database.js";
 
 //get all listings that are currently advertised
 const getAllListings = async (request, response) => {
+  console.log("getting all listings!");
   response.cookie("visited", true, {
     maxAge: 1000 * 60 * 60 * 24 * 7,
   });
   try {
     const query = `
-      SELECT
-        listings.*,
-        properties.*,
-        propertyAmenities.*,
-        (
-          SELECT json_agg(listingAvailability.*)
-          FROM listingAvailability
-          WHERE listingAvailability.listing_id = listings.id
-        ) AS availability,
-        json_agg(DISTINCT listingImages.*) AS images
-      FROM listings
-      INNER JOIN properties ON properties.id = listings.property_id
-      INNER JOIN propertyAmenities ON properties.id = propertyAmenities.property_id
-      LEFT JOIN listingImages ON properties.id = listingImages.property_id
-      GROUP BY listings.id, properties.id, propertyAmenities.id
+      SELECT listings.*, properties.*, propertyAmenities.*, (SELECT json_agg(listingAvailability.*) FROM listingAvailability WHERE listingAvailability.listing_id = listings.id) AS availability FROM listings INNER JOIN properties ON properties.id = listings.property_id INNER JOIN propertyAmenities ON properties.id = propertyAmenities.property_id GROUP BY listings.id, properties.id, propertyAmenities.id
     `;
 
     const results = await pool.query(query);
+    console.log(results, "get the listings from controller");
     response.status(200).json(results.rows);
   } catch (error) {
     response.status(409).json({ error: error.message });
@@ -34,11 +22,29 @@ const getAllListings = async (request, response) => {
 //get all listings that specific user currently has advertised
 const getUserListings = async (request, response) => {
   try {
-    const id = parseInt(request.params.id);
-    const results = await pool.query(
-      "SELECT listings.* FROM users JOIN listings ON users.id = listings.user_id WHERE users.id = $1",
-      [id]
+    const userId = parseInt(request.params.userId);
+
+    // Query the properties table to get property IDs associated with the user
+    const userProperties = await pool.query(
+      "SELECT id FROM properties WHERE host_id = $1",
+      [userId]
     );
+
+    // Extract property IDs from the result
+    const propertyIds = userProperties.rows.map((property) => property.id);
+
+    // Check if there are no properties associated with the user
+    if (propertyIds.length === 0) {
+      // Return an empty array directly
+      return response.status(200).json([]);
+    }
+
+    // Query the listings table using the property IDs
+    const results = await pool.query(
+      "SELECT * FROM listings WHERE property_id = ANY($1)",
+      [propertyIds]
+    );
+
     response.status(200).json(results.rows);
   } catch (error) {
     response.status(409).json({ error: error.message });
@@ -50,7 +56,7 @@ const getListingsByDate = async (request, response) => {
     const startDate = request.params.startDate;
     const endDate = request.params.endDate;
     const results = await pool.query(
-      `SELECT listings.*, properties.*, propertyAmenities.*, (SELECT json_agg(listingAvailability.*) FROM listingAvailability WHERE listingAvailability.listing_id = listings.id) AS availability, json_agg(DISTINCT listingImages.*) AS images FROM listings INNER JOIN properties ON properties.id = listings.property_id INNER JOIN propertyAmenities ON properties.id = propertyAmenities.property_id LEFT JOIN listingImages ON properties.id = listingImages.property_id WHERE listings.id IN (SELECT listing_id FROM listingAvailability WHERE start_availability <= $2 AND end_availability >= $1 OR start_availability BETWEEN $1 AND $2 OR end_availability BETWEEN $1 AND $2) GROUP BY listings.id, properties.id, propertyAmenities.id;
+      `SELECT listings.*, properties.*, propertyAmenities.*, (SELECT json_agg(listingAvailability.*) FROM listingAvailability WHERE listingAvailability.listing_id = listings.id) AS availability, AS images FROM listings INNER JOIN properties ON properties.id = listings.property_id INNER JOIN propertyAmenities ON properties.id = propertyAmenities.property_id IN (SELECT listing_id FROM listingAvailability WHERE start_availability <= $2 AND end_availability >= $1 OR start_availability BETWEEN $1 AND $2 OR end_availability BETWEEN $1 AND $2) GROUP BY listings.id, properties.id, propertyAmenities.id;
 `,
       [startDate, endDate]
     );
@@ -99,27 +105,27 @@ const postNewListing = async (request, response) => {
   }
 };
 
-//add images to a listing
-const postNewListingImages = async (request, response) => {
-  try {
-    const propertyId = parseInt(request.params.id);
-    const { images } = request.body;
+// //add images to a listing
+// const postNewListingImages = async (request, response) => {
+//   try {
+//     const propertyId = parseInt(request.params.id);
+//     const { images } = request.body;
 
-    for (let image of images) {
-      try {
-        const newImage = await pool.query(
-          `INSERT INTO listingImages (property_id, image_url) VALUES ($1, $2) RETURNING *`,
-          [propertyId, image]
-        );
-        response.status(201).json(newImage.rows[0]);
-      } catch (error) {
-        response.status(409).json({ error: error.message });
-      }
-    }
-  } catch (error) {
-    response.status(409).json({ error: error.message });
-  }
-};
+//     for (let image of images) {
+//       try {
+//         const newImage = await pool.query(
+//           `INSERT INTO listingImages (property_id, path) VALUES ($1, $2) RETURNING *`,
+//           [propertyId, image]
+//         );
+//         response.status(201).json(newImage.rows[0]);
+//       } catch (error) {
+//         response.status(409).json({ error: error.message });
+//       }
+//     }
+//   } catch (error) {
+//     response.status(409).json({ error: error.message });
+//   }
+// };
 
 //add availability to a new listing
 const postNewListingAvailability = async (request, response) => {
@@ -160,6 +166,6 @@ export default {
   getListingById,
   postNewListing,
   postNewListingAvailability,
-  postNewListingImages,
+  // postNewListingImages,
   getListingsByDate,
 };

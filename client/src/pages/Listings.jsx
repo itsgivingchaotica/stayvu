@@ -8,10 +8,10 @@ const Listings = ({ data }) => {
     (state) => state.listings?.filteredListings
   );
 
-  useEffect(() => {
-    // This effect will run whenever filteredListings changes
-    console.log("filteredListings changed:", filteredListings);
-  }, [filteredListings]);
+  // useEffect(() => {
+  //   // This effect will run whenever filteredListings changes
+  //   console.log("filteredListings changed:", filteredListings);
+  // }, [filteredListings]);
 
   return filteredListings.length > 0 ? (
     <div className="h-screen mt-6 mb-6 mx-6">

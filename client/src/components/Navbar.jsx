@@ -35,8 +35,8 @@ const Navbar = ({ isModalOpen, setIsModalOpen }) => {
 
   const handleButtonClick = () => {
     dispatch(filterListingsBySearch({ startDate, endDate }));
-    console.log(startDate);
-    console.log(endDate, "from handler");
+    // console.log(startDate);
+    // console.log(endDate, "from handler");
   };
 
   const handleHomeClick = () => {
@@ -53,16 +53,16 @@ const Navbar = ({ isModalOpen, setIsModalOpen }) => {
 
   const toggleLoginModal = () => {
     setIsModalOpen(!isModalOpen);
-    console.log("MODAL open");
+    // console.log("MODAL open");
   };
 
   const handleDateChange = (date, type) => {
     // const formattedDate = format(new Date(date), "yyyy-MM-dd");
-    console.log(date);
+    // console.log(date);
     const jsDate = date.toDate();
     const formattedDate = jsDate ? format(jsDate, "yyyy-MM-dd") : null;
 
-    console.log(formattedDate);
+    // console.log(formattedDate);
 
     if (type === "start") {
       setStartDate(formattedDate);
