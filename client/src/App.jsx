@@ -11,11 +11,11 @@ function App() {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const API_URL =
-    import.meta.env.MODE === "production"
+    process.env.NODE_ENV === "production"
       ? import.meta.env.VITE_SERVER_URL
-      : "http://localhost:3001";
+      : import.meta.env.VITE_BACKEND_URL;
 
-  console.log(API_URL,'from app');
+  console.log(API_URL, "from app");
 
   useEffect(() => {
     const fetchListings = async () => {

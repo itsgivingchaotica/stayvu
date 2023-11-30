@@ -5,7 +5,7 @@ import { set } from "lodash";
 const API_URL =
   process.env.NODE_ENV === "production"
     ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:3001";
+    : import.meta.env.VITE_BACKEND_URL;
 
 export const filterListingsBySearch = createAsyncThunk(
   "listings/filterListingsBySearch",

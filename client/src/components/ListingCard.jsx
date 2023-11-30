@@ -9,11 +9,11 @@ const ListingCard = ({ listing }) => {
   const API_URL =
     process.env.NODE_ENV === "production"
       ? import.meta.env.VITE_SERVER_URL
-      : "http://localhost:3001";
+      : import.meta.env.VITE_BACKEND_URL;
 
   if (!listing || !listing.availability) {
     console.error("Invalid or missing listing data:", listing);
-    return null; 
+    return null;
   }
 
   const formattedAvailability = listing.availability.map((item) => {
@@ -22,7 +22,7 @@ const ListingCard = ({ listing }) => {
 
     if (!startDate || !endDate) {
       console.error("Invalid date range:", item);
-      return null; 
+      return null;
     }
 
     const startMonth = format(startDate, "MMM");
