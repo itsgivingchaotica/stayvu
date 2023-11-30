@@ -1,10 +1,20 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { TbChevronCompactLeft, TbChevronCompactRight } from "react-icons/tb";
 import { RxDotFilled } from "react-icons/rx";
 
-
 const ListingCarousel = ({ images }) => {
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [areImagesLoaded, setAreImagesLoaded] = useState(false);
+
+  useEffect(() => {
+    // Check if all images are loaded
+    const allImagesLoaded = images.every((image) => image.complete);
+
+    // Update the state accordingly
+    if (allImagesLoaded) {
+      setAreImagesLoaded(true);
+    }
+  }, [images]);
 
   const prevSlide = (e) => {
     e.preventDefault();
@@ -27,36 +37,38 @@ const ListingCarousel = ({ images }) => {
 
   return (
     <div className="max-w-[3400px] w-full px-4 pt-4 relative group">
-      <div
-        style={{
-          height: "300px",
-          width: "auto",
-          backgroundImage: `url(${images[currentIndex].image_url})`,
-          backgroundSize: "cover",
-          backgroundPosition: "center",
-          borderRadius: "1rem",
-          display: "flex", // Use flexbox for icon centering
-          justifyContent: "space-between", // Ensure space between icons
-          alignItems: "center", // Center icons vertically
-          position: "relative", // Ensure the div is positioned for z-index
-        }}
-        className="w-full duration-500 bg-slate-400"
-      >
-        {/* Left Arrow */}
+      {areImagesLoaded && (
         <div
-          className="flex text-2xl text-white rounded-full p-2 cursor-pointer backdrop-blur-sm bg-white/30"
-          onClick={prevSlide}
+          style={{
+            height: "300px",
+            width: "auto",
+            backgroundImage: `url(${images[currentIndex]})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            borderRadius: "1rem",
+            display: "flex", // Use flexbox for icon centering
+            justifyContent: "space-between", // Ensure space between icons
+            alignItems: "center", // Center icons vertically
+            position: "relative", // Ensure the div is positioned for z-index
+          }}
+          className="w-full duration-500 bg-slate-400"
         >
-          <TbChevronCompactLeft size={30} />
+          {/* Left Arrow */}
+          <div
+            className="flex text-2xl text-white rounded-full p-2 cursor-pointer backdrop-blur-sm bg-white/30"
+            onClick={prevSlide}
+          >
+            <TbChevronCompactLeft size={30} />
+          </div>
+          {/* Right Arrow */}
+          <div
+            className="text-3xl rounded-full p-2 cursor-pointer text-white backdrop-blur-sm bg-white/30 "
+            onClick={nextSlide}
+          >
+            <TbChevronCompactRight size={30} />
+          </div>
         </div>
-        {/* Right Arrow */}
-        <div
-          className="text-3xl rounded-full p-2 cursor-pointer text-white backdrop-blur-sm bg-white/30 "
-          onClick={nextSlide}
-        >
-          <TbChevronCompactRight size={30} />
-        </div>
-      </div>
+      )}
       <div className="flex justify-center py-2">
         {images.map((image, imageIndex) => (
           <div
