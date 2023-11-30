@@ -6,6 +6,16 @@ import fs from "fs";
 
 const currentPath = fileURLToPath(import.meta.url);
 
+const readImageFile = async (filePath) => {
+  try {
+    const data = await fs.promises.readFile(filePath);
+    return data;
+  } catch (error) {
+    console.error(`Error reading file ${filePath}:`, error);
+    throw error;
+  }
+};
+
 const usersFile = fs.readFileSync(
   path.join(dirname(currentPath), "../config/data/users.json")
 );
@@ -72,7 +82,7 @@ const createPropertiesTable = async () => {
         state VARCHAR(255) NOT NULL,
         country VARCHAR(255) NOT NULL,
         zipcode VARCHAR(255) NOT NULL,
-        rating FLOAT NOT NULL,
+        rating FLOAT,
         num_beds INTEGER NOT NULL,
         num_baths INTEGER NOT NULL,
         num_bedrooms INTEGER NOT NULL,
@@ -162,7 +172,7 @@ const createListingImagesTable = async () => {
     text: `CREATE TABLE IF NOT EXISTS listingImages (
         id SERIAL PRIMARY KEY,
         property_id INTEGER REFERENCES properties(id) NOT NULL,
-        image_url VARCHAR(255) NOT NULL
+        path BYTEA NOT NULL
     )`,
   };
 
@@ -324,21 +334,35 @@ const seedListingAvailabilityTable = async () => {
 };
 
 const seedListingImagesTable = async () => {
-  await createListingImagesTable();
+  try {
+    await createListingImagesTable();
 
-  listingImagesData.forEach((listingImage) => {
-    const insertQuery = {
-      text: "INSERT INTO listingImages (property_id, image_url) VALUES ($1, $2)",
-    };
+    for (const listingImage of listingImagesData) {
+      const { property_id, path } = listingImage;
 
-    const values = [listingImage.property_id, listingImage.image_url];
-    try {
-      pool.query(insertQuery, values);
-      console.log(`✅ ${listingImage.image_url} added successfully`);
-    } catch (err) {
-      console.error("⚠️ error inserting listing image", err);
+      try {
+        // Read the image file as binary data
+        const imageData = await readImageFile(path);
+
+        // Insert binary data into the database
+        const insertQuery = {
+          text: "INSERT INTO listingImages (property_id, path) VALUES ($1, $2)",
+        };
+
+        const values = [property_id, imageData];
+        await pool.query(insertQuery, values);
+
+        console.log(`✅ Image for property ${property_id} added successfully`);
+      } catch (err) {
+        console.error(
+          `⚠️ Error inserting listing image for property ${property_id}:`,
+          err
+        );
+      }
     }
-  });
+  } catch (err) {
+    console.error("⚠️ Error creating listingImages table:", err);
+  }
 };
 
 const dropAllTables = async () => {
@@ -350,6 +374,17 @@ const dropAllTables = async () => {
     console.log("🎉 all tables dropped successfully");
   } catch (err) {
     console.log("⚠️ error dropping tables", err);
+  }
+};
+
+const dropListImagesTable = async () => {
+  const dropTablesQuery = "DROP TABLE IF EXISTS listingImages";
+
+  try {
+    await pool.query(dropTablesQuery);
+    console.log("🎉 all images for properties dropped successfully");
+  } catch (err) {
+    console.log("⚠️ error dropping properties images table", err);
   }
 };
 
@@ -378,5 +413,6 @@ const createSessionTable = async () => {
 // seedListingsTable();
 // seedPropertyAmenitiesTable();
 // seedListingAvailabilityTable();
+// dropListImagesTable();
 // seedListingImagesTable();
-createSessionTable();
+// createSessionTable();
