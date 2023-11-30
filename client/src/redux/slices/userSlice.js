@@ -39,7 +39,7 @@ export const authRegister = createAsyncThunk(
     const apiUrl = `${API_URL}/api/auth/register`;
     try {
       const res = await axios.post(
-        `${import.meta.env.VITE_BACKEND_URL}/api/auth/register`,
+        `${API_URL}/api/auth/register`,
         { first_name, last_name, zipcode, phone, user_name, email, password },
         { withCredentials: true }
       );
