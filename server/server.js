@@ -13,6 +13,8 @@ import cookieParser from "cookie-parser";
 import "./strategies/local.js";
 import { conString } from "./config/database.js";
 import connectPgSimple from "connect-pg-simple";
+// import multer from "multer";
+// import path from "path";
 
 const CLIENT_URL =
   process.env.NODE_ENV === "production"
@@ -31,6 +33,18 @@ const PostgresqlStore = connectPgSimple(session);
 const sessionStore = new PostgresqlStore({
   conString: conString,
 });
+
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "devImages");
+//   },
+//   filename: (req, file, cb) => {
+//     console.log(file);
+//     cb(null, Date.now() + path.extname(file.originalname));
+//   },
+// });
+// const upload = multer({ storage: storage });
+
 app.use(express.json());
 app.use(cookieParser());
 
