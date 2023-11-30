@@ -138,6 +138,7 @@ export const createNewUserProperty = createAsyncThunk(
       // dispatch(addUserPropertyToList(combinedData));
       // Wait for the addUserPropertyToList action to complete
       await dispatch(fetchUserPropertyImages(propertyId));
+      await dispatch(fetchUserProperties({ userId: host_id }));
     } catch (error) {
       console.error("Error creating new user property", error);
       console.log("Error details:", error.response.data);

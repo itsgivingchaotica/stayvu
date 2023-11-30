@@ -27,7 +27,7 @@ const UserPropertyCard = ({ userProperty, handleDeleteProperty }) => {
       }
     };
     fetchPropertyImages();
-  }, [userProperties]);
+  }, []);
 
   return (
     <li>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ProfileListings from "../components/ProfileListings";
 import ProfileProperties from "../components/ProfileProperties";
 import { useParams } from "react-router-dom";
@@ -37,6 +37,13 @@ const Profile = () => {
   const [isPhotoIconHovered, setIsPhotoIconHovered] = useState(false);
 
   const user = useSelector((state) => state.user?.loggedInUser);
+  const userProperties = useSelector(
+    (state) => state.properties?.userProperties
+  );
+  const memoizedUserProperties = useMemo(
+    () => userProperties,
+    [userProperties]
+  );
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -116,6 +123,10 @@ const Profile = () => {
       dispatch(fetchUpdatedUserInfo(user.id));
     }
   }, [user?.image_url]);
+
+  // useEffect(() => {
+  //   dispatch(fetchUserProperties({ userId: user.id }));
+  // }, []);
 
   // useEffect(() => {
   //   dispatch(fetchUserProperties({ userId: user?.id }));

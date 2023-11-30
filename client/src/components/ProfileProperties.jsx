@@ -156,16 +156,13 @@ const ProfileProperties = ({ setActiveTab }) => {
 
     // Hide the form
     setShowForm(false);
+    setCurrentStep(1);
     setActiveTab("properties");
   };
 
   // console.log(amenities);
   // console.log(imageFiles);
   // console.log(formData);
-
-  useEffect(() => {
-    dispatch(fetchUserProperties({ userId: user?.id }));
-  }, [userProperties]);
 
   return (
     <div className="flex flex-col justify-center max-w mx-auto mt-8">

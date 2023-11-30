@@ -6,6 +6,7 @@ import { fetchUserProperties } from "../redux/slices/propertiesSlice";
 
 const UserProperties = ({ showForm }) => {
   const dispatch = useDispatch();
+  const [localUserProperties, setLocalUserProperties] = useState([]);
   const userProperties = useSelector(
     (state) => state.properties?.userProperties
   );
