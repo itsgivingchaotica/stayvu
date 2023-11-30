@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import ProfileListing from "./ProfileListing";
+import ProfileListings from "../components/ProfileListings";
+import ProfileProperties from "../components/ProfileProperties";
 import { useParams } from "react-router-dom";
 // import UserIcon from "../jsons/UserIcon.json";
 import { useSelector, useDispatch } from "react-redux";
@@ -10,6 +11,7 @@ import {
   postNewProfilePhoto,
   fetchUpdatedUserInfo,
 } from "../redux/slices/userSlice";
+import { fetchUserProperties } from "../redux/slices/propertiesSlice";
 
 const Profile = () => {
   const dispatch = useDispatch();
@@ -84,13 +86,13 @@ const Profile = () => {
     if (Object.keys(errors).length === 0) {
       const newUpdates = filterEmptyValues(userData);
       handleSubmitUpdates(newUpdates);
-      console.log("Profile updated successfully!");
+      // console.log("Profile updated successfully!");
       setUpdateSuccess(true);
       setTimeout(() => {
         setUpdateSuccess(false);
       }, 3000);
     }
-    console.log("unsuccessful");
+    // console.log("unsuccessful");
   };
 
   //send updates through redux
@@ -114,6 +116,11 @@ const Profile = () => {
       dispatch(fetchUpdatedUserInfo(user.id));
     }
   }, [user?.image_url]);
+
+  // useEffect(() => {
+  //   dispatch(fetchUserProperties({ userId: user?.id }));
+  //   console.log("GETTING THT SWEET SWEET USER PROPERTIES");
+  // }, [activeTab]);
 
   return user ? (
     <div className="lg:max-w-5xl mx-auto mt-16 mb-8 border-2 border-#FF385C rounded-lg p-10">
@@ -450,11 +457,15 @@ const Profile = () => {
 
       {activeTab === "listings" && (
         <div>
-          <ProfileListing />
+          <ProfileListings />
         </div>
       )}
 
-      {activeTab === "properties" && <div>properties</div>}
+      {activeTab === "properties" && (
+        <div>
+          <ProfileProperties setActiveTab={setActiveTab} />
+        </div>
+      )}
     </div>
   ) : (
     <div>loading...</div>
