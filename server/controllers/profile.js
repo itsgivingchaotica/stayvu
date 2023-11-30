@@ -1,9 +1,9 @@
 import { pool } from "../config/database.js";
 
-const CLIENT_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.PROD_CLIENT_URL
-    : "http://localhost:5173";
+// const CLIENT_URL =
+//   process.env.NODE_ENV === "production"
+//     ? process.env.PROD_CLIENT_URL
+//     : "http://localhost:5173";
 
 const updateUserProfile = async (req, res) => {
   try {
@@ -67,7 +67,7 @@ const updateUserProfilePhoto = async (req, res) => {
       res.status(200).json({
         message: "Profile updated successfully.",
         id: updatedUserId,
-        redirect: `https://${CLIENT_URL}/profile/${updatedUserId}`,
+        redirect: `https://stayvue.up.railway.app/profile/${updatedUserId}`,
       });
     } else {
       console.error("Profile update failed:", result);

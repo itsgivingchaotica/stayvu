@@ -16,10 +16,7 @@ import connectPgSimple from "connect-pg-simple";
 // import multer from "multer";
 // import path from "path";
 
-const CLIENT_URL =
-  process.env.NODE_ENV === "production"
-    ? process.env.PROD_CLIENT_URL
-    : "http://localhost:5173";
+const CLIENT_URL = process.env.PROD_CLIENT_URL
 
 const API_URL =
   process.env.NODE_ENV === "production"
@@ -59,8 +56,8 @@ app.use(
 // app.use(cors());
 app.use(
   cors({
-    origin: CLIENT_URL,
-    methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+    origin: "https://stayvue.up.railway.app",
+    methods: "*",
     credentials: true,
   })
 );

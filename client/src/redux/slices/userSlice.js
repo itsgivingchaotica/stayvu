@@ -3,10 +3,9 @@ import axios from "axios";
 import { set } from "date-fns";
 import cloneDeep from "lodash/cloneDeep";
 
-const API_URL =
-  process.env.NODE_ENV === "production"
-    ? import.meta.env.VITE_SERVER_URL
-    : "http://localhost:3001";
+const API_URL = import.meta.env.VITE_SERVER_URL
+
+console.log(API_URL,'from redux');
 
 export const authLogIn = createAsyncThunk(
   "user/authLogIn",
