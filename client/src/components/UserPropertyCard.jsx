@@ -1,25 +1,37 @@
 import React, { useEffect, useState } from "react";
 import ListingCarousel from "./ListingCarousel";
 import axios from "axios";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 
-const UserPropertyCard = ({ userProperty, handleDeleteProperty }) => {
+const UserPropertyCard = ({
+  userProperty,
+  handleDeleteProperty,
+  handleEditPropertyForm,
+  isEditingProperty,
+}) => {
   const API_URL =
     process.env.NODE_ENV === "production"
       ? import.meta.env.VITE_SERVER_URL
       : import.meta.env.VITE_BACKEND_URL;
 
+  const dispatch = useDispatch();
   const [propertyImages, setPropertyImages] = useState([]);
+  const currentProperty = useSelector(
+    (state) => state.properties?.currentProperty
+  );
   const userProperties = useSelector(
     (state) => state.properties?.userProperties
   );
+  
   useEffect(() => {
     const fetchPropertyImages = async () => {
+      console.log("fetching property images for property id:", userProperty.id);
       try {
         const res = await axios.get(
           `${API_URL}/api/properties/images/retrieve/${userProperty.id}`,
           { withCredentials: true }
         );
+        console.log(res.data, "from fetch property images");
         setPropertyImages(res.data);
       } catch (error) {
         console.error("Error fetching single property images", error);
@@ -51,10 +63,16 @@ const UserPropertyCard = ({ userProperty, handleDeleteProperty }) => {
 
         <div className="flex justify-between mt-4">
           <button
-            onClick={() => handleDeleteProperty(userProperty.property_id)}
-            className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 w-full"
+            onClick={() => handleDeleteProperty(userProperty.id)}
+            className="bg-red-500 text-white py-2 px-4 rounded-md hover:bg-red-600 w-full mr-4"
           >
             Delete
+          </button>
+          <button
+            onClick={() => handleEditPropertyForm(userProperty.id)}
+            className="bg-white text-red-500 py-2 border-2 border-red-400 px-4 rounded-md hover:bg-green-600 hover:text-white hover:border-white w-full"
+          >
+            Edit
           </button>
         </div>
       </div>
