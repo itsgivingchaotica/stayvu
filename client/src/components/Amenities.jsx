@@ -1,30 +1,5 @@
 import React from "react";
-import { BiSolidWasher, BiSolidDryer } from "react-icons/bi";
-import {
-  FaWifi,
-  FaParking,
-  FaUmbrellaBeach,
-  FaWater,
-  FaMountain,
-  FaCity,
-  FaWheelchair,
-  FaSmoking,
-} from "react-icons/fa";
-import {
-  MdIron,
-  MdPool,
-  MdOutdoorGrill,
-  MdElevator,
-  MdOutlinePets,
-} from "react-icons/md";
-import { FaBolt } from "react-icons/fa6";
-import { CgGym } from "react-icons/cg";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faFan,
-  faTemperatureArrowUp,
-  faHotTubPerson,
-} from "@fortawesome/free-solid-svg-icons";
+import { iconMap } from "./IconMap.jsx";
 
 const Amenities = ({
   amenities,
@@ -36,39 +11,39 @@ const Amenities = ({
     return string.charAt(0).toUpperCase() + string.slice(1).replace(/_/g, " ");
   };
 
-  const iconMap = {
-    wifi: <FaWifi />,
-    dryer: <BiSolidDryer />,
-    washer: <BiSolidWasher />,
-    iron: <MdIron />,
-    air_conditioner: (
-      <FontAwesomeIcon icon={faFan} style={{ color: "#000000" }} />
-    ),
-    heater: (
-      <FontAwesomeIcon
-        icon={faTemperatureArrowUp}
-        style={{ color: "#000000" }}
-      />
-    ),
-    pool_available: <MdPool />,
-    grill: <MdOutdoorGrill />,
-    hot_tub: (
-      <FontAwesomeIcon icon={faHotTubPerson} style={{ color: "#000000" }} />
-    ),
-    free_parking: <FaParking />,
-    ev_charger: <FaBolt />,
-    beach_front: <FaUmbrellaBeach />,
-    water_front: <FaWater />,
-    mountain_view: <FaMountain />,
-    city_view: <FaCity />,
-    gym: <CgGym />,
-    elevator: <MdElevator />,
-    wheelchair_accessible: <FaWheelchair />,
-    pet_friendly: <MdOutlinePets />,
-    smoking_allowed: <FaSmoking />,
-  };
+  // const iconMap = {
+  //   wifi: <FaWifi />,
+  //   dryer: <BiSolidDryer />,
+  //   washer: <BiSolidWasher />,
+  //   iron: <MdIron />,
+  //   air_conditioner: (
+  //     <FontAwesomeIcon icon={faFan} style={{ color: "#000000" }} />
+  //   ),
+  //   heater: (
+  //     <FontAwesomeIcon
+  //       icon={faTemperatureArrowUp}
+  //       style={{ color: "#000000" }}
+  //     />
+  //   ),
+  //   pool_available: <MdPool />,
+  //   grill: <MdOutdoorGrill />,
+  //   hot_tub: (
+  //     <FontAwesomeIcon icon={faHotTubPerson} style={{ color: "#000000" }} />
+  //   ),
+  //   free_parking: <FaParking />,
+  //   ev_charger: <FaBolt />,
+  //   beach_front: <FaUmbrellaBeach />,
+  //   water_front: <FaWater />,
+  //   mountain_view: <FaMountain />,
+  //   city_view: <FaCity />,
+  //   gym: <CgGym />,
+  //   elevator: <MdElevator />,
+  //   wheelchair_accessible: <FaWheelchair />,
+  //   pet_friendly: <MdOutlinePets />,
+  //   smoking_allowed: <FaSmoking />,
+  // };
 
-//   console.log(amenities, "from amenities");
+  //   console.log(amenities, "from amenities");
 
   return (
     <>
@@ -87,9 +62,10 @@ const Amenities = ({
             <label
               htmlFor={key}
               className="ms-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              i
             >
               <div className="flex items-center justify-center px-2 text-xl">
-                <div className="mr-2">{iconMap[key]}</div>
+                <div className="mr-2">{iconMap[key].icon}</div>
                 {formatAmenitiesValues(key)}
               </div>
             </label>

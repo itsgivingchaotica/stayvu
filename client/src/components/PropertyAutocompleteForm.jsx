@@ -6,6 +6,7 @@ const PropertyAutocompleteForm = ({
   handleInputChange,
   handleNextStep,
   setFormData,
+  isEditingProperty,
 }) => {
   const searchInputRef = useRef(null);
   const [latitude, setLatitude] = useState(0);
@@ -14,9 +15,9 @@ const PropertyAutocompleteForm = ({
 
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
-//   if (formData.property_type) {
-//     console.log(formData.property_type);
-//   }
+  //   if (formData.property_type) {
+  //     console.log(formData.property_type);
+  //   }
 
   const handleSubmit = (e) => {
     // e.preventDefault(); // Prevent the default form submission behavior
@@ -146,6 +147,11 @@ const PropertyAutocompleteForm = ({
   };
   return (
     <form autoComplete="off" className="p-4 space-y-4" onSubmit={handleSubmit}>
+      {isEditingProperty ? (
+        <div className="text-2xl font-bold mb-4">Edit Property Details</div>
+      ) : (
+        <h1 className="text-2xl font-bold mb-4">Property Details</h1>
+      )}
       {/* Form fields go here */}
       <label htmlFor="address1">Address 1:</label>
       <input

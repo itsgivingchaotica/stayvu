@@ -11,9 +11,13 @@ router.get(
   "/images/retrieve/:propertyId",
   PropertiesController.getPropertyImages
 );
+router.get(
+  "/images/retrieve/paths/:propertyId",
+  PropertiesController.getPropertyImagesByPaths
+);
 router.post("/new/:hostId", PropertiesController.postNewProperty);
 router.post(
-  "/images/single/:propertyId",
+  "/images/single/:propertyId/:imagePath",
   (req, res, next) => {
     upload(req, res, next);
   },
@@ -26,6 +30,15 @@ router.post(
   },
   PropertiesController.postNewPropertyImages
 );
+router.post(
+  "/images/toDb/:propertyId/:imagePath",
+  PropertiesController.postNewPropertyImageToDb
+);
+router.patch("/edit/:propertyId", PropertiesController.patchPropertyById);
 router.delete("/delete/:propertyId", PropertiesController.deletePropertyById);
+router.delete(
+  "/delete/images/:propertyId/:imagepath",
+  PropertiesController.deletePropertyImage
+);
 
 export default router;

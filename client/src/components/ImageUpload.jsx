@@ -1,4 +1,5 @@
 import React from "react";
+import { useSelector } from "react-redux";
 import { IoCloseOutline } from "react-icons/io5";
 
 const ImageUpload = ({
@@ -7,8 +8,15 @@ const ImageUpload = ({
   handleDeleteImage,
   imageFiles,
   handleFileChange,
+  isEditingProperty,
+  editingImageFiles,
+  handleDeleteEditingImageFiles,
 }) => {
-  const areImagesUploaded = imageFiles && imageFiles.length > 0;
+  const currentPropertyImages = useSelector(
+    (state) => state.properties?.currentPropertyImages
+  );
+  const areImagesUploaded =
+    (imageFiles && imageFiles.length > 0) || currentPropertyImages;
 
   const handleDeleteAndReload = (e, index) => {
     // Prevent the event from propagating to the parent div, which triggers file input
@@ -59,9 +67,45 @@ const ImageUpload = ({
         </label>
       </div>
       <div className="flex justify-center mt-8">
-        {areImagesUploaded && (
+        {isEditingProperty && currentPropertyImages ? (
           <div className="grid grid-cols-3 gap-4">
-            {imageFiles.map((file, index) => (
+            {currentPropertyImages.map((image, index) => (
+              <div
+                style={{ position: "relative" }}
+                key={index}
+                onClick={(e) =>
+                  handleDeleteEditingImageFiles(e, currentPropertyImages[index])
+                }
+              >
+                <IoCloseOutline
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    right: 0,
+                    cursor: "pointer",
+                    color: "white",
+                    fontWeight: "bold",
+                    fontSize: "50px",
+                    border: "2px solid white",
+                  }}
+                  onMouseOver={(e) => {
+                    e.currentTarget.style.color = "red";
+                    e.currentTarget.style.border = "2px solid red";
+                  }}
+                  onMouseOut={(e) => {
+                    e.currentTarget.style.color = "white";
+                    e.currentTarget.style.border = "2px solid white";
+                  }}
+                  onClick={(e) => handleDeleteEditingImageFiles(e, index)}
+                />
+                <img
+                  src={image.imagesByPaths}
+                  alt={`Image ${index + 1}`}
+                  className="w-64 h-64 object-cover rounded"
+                />
+              </div>
+            ))}
+            {imageFiles?.map((file, index) => (
               <div
                 style={{ position: "relative" }}
                 key={index}
@@ -96,6 +140,45 @@ const ImageUpload = ({
               </div>
             ))}
           </div>
+        ) : (
+          areImagesUploaded && (
+            <div className="grid grid-cols-3 gap-4">
+              {imageFiles.map((file, index) => (
+                <div
+                  style={{ position: "relative" }}
+                  key={index}
+                  onClick={(e) => handleDeleteAndReload(e, index)}
+                >
+                  <IoCloseOutline
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      cursor: "pointer",
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: "50px",
+                      border: "2px solid white",
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.color = "red";
+                      e.currentTarget.style.border = "2px solid red";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.color = "white";
+                      e.currentTarget.style.border = "2px solid white";
+                    }}
+                    onClick={(e) => handleDeleteAndReload(e, index)}
+                  />
+                  <img
+                    src={URL.createObjectURL(file)}
+                    alt={`Image ${index + 1}`}
+                    className="w-64 h-64 object-cover rounded"
+                  />
+                </div>
+              ))}
+            </div>
+          )
         )}
       </div>
       <div className="flex justify-between">
