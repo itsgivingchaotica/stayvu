@@ -37,7 +37,7 @@ export const fetchUserPropertyById = createAsyncThunk(
         { withCredentials: true }
       );
       dispatch(setCurrentProperty(res.data));
-      console.log(res.data, "is the current property with id", res.data.id);
+      // console.log(res.data, "is the current property with id", res.data.id);
     } catch (error) {
       console.error("Error fetching single property", error);
       throw error;
@@ -48,6 +48,10 @@ export const fetchUserPropertyById = createAsyncThunk(
 export const fetchUserPropertyImages = createAsyncThunk(
   "properties/fetchUserPropertyImages",
   async ({ propertyId }, { dispatch }) => {
+    console.log(
+      propertyId,
+      "getting property Id for the property being edited"
+    );
     try {
       const res = await axios.get(
         `${API_URL}/api/properties/images/retrieve/${propertyId}`,
@@ -182,11 +186,12 @@ export const fetchUserPropertyImagesByPaths = createAsyncThunk(
         {},
         { withCredentials: true }
       );
+      const data = res.data;
       console.log(
-        res.data,
+        data,
         "data was fetched for the existing user property images"
       );
-      return res;
+      return data;
       // dispatch(setCurrentPropertyImages(res.data));
     } catch (error) {
       console.error("Error fetching property images", error);
@@ -198,7 +203,10 @@ export const fetchUserPropertyImagesByPaths = createAsyncThunk(
 //edit user property
 export const editUserPropertyById = createAsyncThunk(
   "properties/editUserProperty",
-  async ({ formData, amenities, imageFiles, propertyId }, { dispatch }) => {
+  async (
+    { formData, amenities, imageFiles, propertyId, imageIndexesToDelete },
+    { dispatch }
+  ) => {
     try {
       const {
         host_id,
@@ -214,6 +222,8 @@ export const editUserPropertyById = createAsyncThunk(
         property_type,
       } = formData;
 
+      console.log(imageIndexesToDelete, "image indexes to delete from redux");
+
       const res = await axios.patch(
         `${API_URL}/api/properties/edit/${propertyId}`,
         {
@@ -223,6 +233,29 @@ export const editUserPropertyById = createAsyncThunk(
         { withCredentials: true }
       );
       console.log(res, "res from edit property");
+
+      // Delete Images, if any
+      if (imageIndexesToDelete.length > 0) {
+        console.log("DELETETING " + imageIndexesToDelete.length + "IMAGESs");
+        try {
+          for (let i = 0; i < imageIndexesToDelete.length; i++) {
+            console.log("deleting image at index ", imageIndexesToDelete[i]);
+            const index = imageIndexesToDelete[i];
+            const imagesRes = await axios.delete(
+              `${API_URL}/api/properties/delete/images/${propertyId}/${index}`,
+              { withCredentials: true }
+            );
+            console.log(imagesRes.data, "image was deleted via redux");
+          }
+        } catch (imageDeleteError) {
+          console.error("Error deleting images", imageDeleteError);
+          console.log(
+            "Error details:",
+            imageDeleteError.response?.data || "No error details available"
+          );
+          throw imageDeleteError;
+        }
+      }
 
       // Image Upload
       if (imageFiles.length > 0) {
@@ -257,6 +290,7 @@ export const editUserPropertyById = createAsyncThunk(
           { withCredentials: true }
         );
         console.log(imageGetRes.data, "fetching the images for the user");
+        return imageGetRes.data;
       } catch (imageFetchError) {
         console.error("Error fetching property images", imageFetchError);
         console.log(
@@ -266,9 +300,9 @@ export const editUserPropertyById = createAsyncThunk(
         throw imageFetchError;
       }
 
-      // Dispatch Actions
-      await dispatch(fetchUserPropertyImages(propertyId));
-      await dispatch(fetchUserProperties({ userId: host_id }));
+      // Dispatch Actions to Refresh properties and their images for image carousel
+      // await dispatch(fetchUserPropertyImages(propertyId));
+      // await dispatch(fetchUserProperties({ userId: host_id }));
       setCurrentProperty([]);
     } catch (error) {
       console.error(`Error editing user property ${propertyId}`, error);
@@ -293,7 +327,7 @@ export const deleteUserPropertyImage = createAsyncThunk(
 
         if (imagepath) {
           const imagesRes = await axios.delete(
-            `${API_URL}/api/properties/delete/images/${propertyId}/${imagepath}`,
+            `${API_URL}/api/properties/delete/images/${propertyId}`,
             { withCredentials: true }
           );
           dispatch(deleteUserPropertyImage.fulfilled(index));
@@ -406,8 +440,13 @@ const propertiesSlice = createSlice({
       //     };
       //   }
       // });
-      .addCase(fetchUserPropertyImagesByPaths.fulfilled, (state, action) => {
-        state.currentPropertyImages = action.payload.data;
+      .addCase(fetchUserPropertyImages.fulfilled, (state, action) => {
+        console.log("Fulfilled Action Payload:", action.payload);
+        state.currentPropertyImages = action.payload;
+        state.status = "succeeded";
+      })
+      .addCase(editUserPropertyById.fulfilled, (state, action) => {
+        state.currentPropertyImages = action.payload;
         state.status = "succeeded";
       })
       .addCase(deleteUserPropertyImage.fulfilled, (state, action) => {

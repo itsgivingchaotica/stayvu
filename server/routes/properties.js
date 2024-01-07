@@ -37,7 +37,7 @@ router.post(
 router.patch("/edit/:propertyId", PropertiesController.patchPropertyById);
 router.delete("/delete/:propertyId", PropertiesController.deletePropertyById);
 router.delete(
-  "/delete/images/:propertyId/:imagepath",
+  "/delete/images/:propertyId/:index",
   PropertiesController.deletePropertyImage
 );
 
