@@ -9,7 +9,6 @@ const ListingCarousel = ({ images }) => {
   useEffect(() => {
     // Check if all images are loaded
     const allImagesLoaded = images.every((image) => image.complete);
-
     // Update the state accordingly
     if (allImagesLoaded) {
       setAreImagesLoaded(true);
@@ -36,7 +35,10 @@ const ListingCarousel = ({ images }) => {
   };
 
   return (
-    <div className="max-w-[3400px] w-full px-4 pt-4 relative group">
+    <div
+      key={images.length}
+      className="max-w-[3400px] w-full px-4 pt-4 relative group"
+    >
       {areImagesLoaded && (
         <div
           style={{
