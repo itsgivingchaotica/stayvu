@@ -26,6 +26,7 @@ const ProfileProperties = ({ setActiveTab }) => {
   const [showForm, setShowForm] = useState(false);
   const [isEditingProperty, setIsEditingProperty] = useState(false);
   const [editingImageFiles, setEditingImageFiles] = useState([]);
+  const [imageIndexesToDelete, setImageIndexesToDelete] = useState([]);
   const dispatch = useDispatch();
   const user = useSelector((state) => state.user?.loggedInUser);
   const userProperties = useSelector(
@@ -84,13 +85,6 @@ const ProfileProperties = ({ setActiveTab }) => {
 
   const handleFileChange = (e) => {
     const files = e.target.files;
-    //  let files = [];
-    //  for (let i = 0; i < e.target.files.length; i++) {
-    //    files.push(e.target.files[i].name);
-    //  }
-    //  console.log(files, "files from handleFileChange");
-    //  setImageFiles((prevFiles) => [...prevFiles, ...files]);
-    console.log(files, "files from handleFileChange");
     setImageFiles((prevFiles) => [...prevFiles, ...files]);
   };
 
@@ -181,12 +175,24 @@ const ProfileProperties = ({ setActiveTab }) => {
       ...prevAmenities,
       [key]: !prevAmenities[key],
     }));
-    console.log(amenities);
   };
 
+  const handleImageIndexToDelete = (e, index) => {
+    setImageIndexesToDelete((prevIndexes) => {
+      const updatedIndexes = [...prevIndexes, index];
+      console.log(updatedIndexes, "image indexes to delete");
+      return updatedIndexes;
+    });
+  };
   const handleEditProperty = (propertyId) => {
     dispatch(
-      editUserPropertyById({ propertyId, formData, imageFiles, amenities })
+      editUserPropertyById({
+        propertyId,
+        formData,
+        imageFiles,
+        amenities,
+        imageIndexesToDelete,
+      })
     );
     setShowForm(false);
     setCurrentStep(1);
@@ -198,8 +204,6 @@ const ProfileProperties = ({ setActiveTab }) => {
   const handleFormSubmit = () => {
     // Add the form data to the list of user listings
     // setUserProperties([...userProperties, formData]);
-    console.log(formData, "from react the form Data");
-    console.log(amenities, "from react the amenities");
     dispatch(createNewUserProperty({ formData, imageFiles, amenities }));
 
     // // Clear the form data
@@ -242,6 +246,7 @@ const ProfileProperties = ({ setActiveTab }) => {
     // Hide the form
     setShowForm(false);
     setCurrentStep(1);
+    setImageIndexesToDelete([]);
     setActiveTab("properties");
   };
 
@@ -251,7 +256,6 @@ const ProfileProperties = ({ setActiveTab }) => {
 
   useEffect(() => {
     if (currentProperty && Object.keys(currentProperty).length > 0) {
-      console.log("setting current property");
       setFormData({
         host_id: user?.id,
         address1: currentProperty.address1,
@@ -287,11 +291,9 @@ const ProfileProperties = ({ setActiveTab }) => {
         pet_friendly: currentProperty.pet_friendly,
         smoking_allowed: currentProperty.smoking_allowed,
       });
-      dispatch(
-        fetchUserPropertyImagesByPaths({ propertyId: currentProperty?.id })
-      );
+      dispatch(fetchUserPropertyImages({ propertyId: currentProperty?.id }));
     }
-  }, [currentProperty]);
+  }, [currentProperty, isEditingProperty]);
 
   return (
     <div className="flex flex-col justify-center max-w mx-auto mt-8">
@@ -329,6 +331,8 @@ const ProfileProperties = ({ setActiveTab }) => {
               isEditingProperty={isEditingProperty}
               editingImageFiles={editingImageFiles}
               handleDeleteEditingImageFiles={handleDeleteEditingImageFiles}
+              handleImageIndexToDelete={handleImageIndexToDelete}
+              imageIndexesToDelete={imageIndexesToDelete}
             />
           ) : currentStep === 3 ? (
             <div className="mt-8">
