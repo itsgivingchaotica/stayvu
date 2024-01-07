@@ -19,10 +19,13 @@ const UserPropertyCard = ({
   const currentProperty = useSelector(
     (state) => state.properties?.currentProperty
   );
+  const currentPropertyImages = useSelector(
+    (state) => state.properties?.currentPropertyImages
+  );
   const userProperties = useSelector(
     (state) => state.properties?.userProperties
   );
-  
+
   useEffect(() => {
     const fetchPropertyImages = async () => {
       console.log("fetching property images for property id:", userProperty.id);
@@ -39,7 +42,7 @@ const UserPropertyCard = ({
       }
     };
     fetchPropertyImages();
-  }, []);
+  }, [currentPropertyImages]);
 
   return (
     <li>
