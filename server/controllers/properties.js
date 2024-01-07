@@ -1,5 +1,12 @@
 import { pool } from "../config/database.js";
-import { getStorage, ref, listAll, getDownloadURL } from "firebase/storage";
+import {
+  getStorage,
+  ref,
+  listAll,
+  getDownloadURL,
+  deleteObject,
+} from "firebase/storage";
+
 import {
   uploadImage,
   uploadMultipleImages,
@@ -123,6 +130,7 @@ const getPropertyImagesByPaths = async (request, response) => {
         imagesByPaths,
       };
     });
+    console.log(combined, "combined result");
     response.status(200).json(combined);
   } catch (error) {
     response.status(409).json({ error: error.message });
@@ -187,18 +195,63 @@ const postNewPropertyImageToDb = async (request, response) => {
   }
 };
 
-const deletePropertyImage = async (request, response) => {
+const getPropertyImagesWithIndexes = async (propertyId) => {
   try {
-    const propertyId = parseInt(request.params.propertyId);
-    const imagepath = request.params.imagepath;
-    const buildImage = await deleteImage(propertyId, imagepath);
-    response.send({
-      status: "single image upload success",
-      imageName: buildImage,
-      propertyId: propertyId,
-    });
-  } catch (err) {
-    console.log(err);
+    const storageFB = getStorage();
+    const propertyImagesRef = ref(storageFB, `images/${propertyId}`);
+
+    const allImages = await getPropertyImagesRecursive(propertyImagesRef);
+
+    // Return an array of objects with image URLs and indexes
+    return allImages.map((image, index) => ({ image, index }));
+  } catch (error) {
+    console.error(error);
+    return [];
+  }
+};
+
+const deletePropertyImage = async (request, response) => {
+  const propertyId = parseInt(request.params.propertyId);
+  const index = parseInt(request.params.index);
+  const storageFB = getStorage();
+  console.log(
+    "delete property image hit controller with property id" +
+      propertyId +
+      " and index " +
+      index
+  );
+
+  try {
+    // Get the list of images for the property with indexes
+    const imagesWithIndexes = await getPropertyImagesWithIndexes(propertyId);
+
+    // Check if the index is valid
+    if (index >= 0 && index < imagesWithIndexes.length) {
+      // Construct the full path to the file
+      const imagePath = imagesWithIndexes[index].image;
+
+      // Get a reference to the file
+      const fileRef = ref(storageFB, imagePath);
+
+      // Delete the file
+      await deleteObject(fileRef);
+      console.log(
+        `Successfully deleted image at index ${index} for ${propertyId}`
+      );
+
+      // Send a success response to the client
+      response.status(200).json({ message: "Image deleted successfully" });
+    } else {
+      // Send a client error response for an invalid index
+      response.status(400).json({ error: "Invalid index" });
+      console.error(`Invalid index: ${index}`);
+    }
+  } catch (error) {
+    // Send a server error response for any other errors
+    response.status(500).json({ error: "Internal Server Error" });
+    console.error(
+      `Error deleting image at index ${index} for ${propertyId}: ${error.message}`
+    );
   }
 };
 
