@@ -11,12 +11,23 @@ const ImageUpload = ({
   isEditingProperty,
   editingImageFiles,
   handleDeleteEditingImageFiles,
+  handleImageIndexToDelete,
+  imageIndexesToDelete,
 }) => {
   const currentPropertyImages = useSelector(
     (state) => state.properties?.currentPropertyImages
   );
+
+  if (currentPropertyImages) {
+    console.log(currentPropertyImages, "CURRENT PROPERTY IMAGES WHILE EDITING");
+  }
   const areImagesUploaded =
     (imageFiles && imageFiles.length > 0) || currentPropertyImages;
+
+  const filteredImages = currentPropertyImages
+    .map((image, index) => ({ image, index })) // Map each element with its index
+    .filter(({ index }) => !imageIndexesToDelete.includes(index))
+    .map(({ image }) => image);
 
   const handleDeleteAndReload = (e, index) => {
     // Prevent the event from propagating to the parent div, which triggers file input
@@ -66,43 +77,49 @@ const ImageUpload = ({
           />
         </label>
       </div>
-      <div className="flex justify-center mt-8">
+      <div className="flex mt-8">
         {isEditingProperty && currentPropertyImages ? (
-          <div className="grid grid-cols-3 gap-4">
-            {currentPropertyImages.map((image, index) => (
+          <div className="grid grid-cols-3 gap-4 relative">
+            {filteredImages?.map((image, index) => (
               <div
-                style={{ position: "relative" }}
+                className="relative" // Added this class to set relative positioning for the container
                 key={index}
-                onClick={(e) =>
-                  handleDeleteEditingImageFiles(e, currentPropertyImages[index])
-                }
+                // onClick={(e) => handleDeleteEditingImageFiles(e, index)}
               >
-                <IoCloseOutline
+                <div
                   style={{
-                    position: "absolute",
-                    top: 0,
-                    right: 0,
-                    cursor: "pointer",
-                    color: "white",
-                    fontWeight: "bold",
-                    fontSize: "50px",
-                    border: "2px solid white",
+                    backgroundImage: `url(${image})`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    display: "flex",
+                    justifyContent: "space-between",
+                    alignItems: "center",
+                    position: "relative",
                   }}
-                  onMouseOver={(e) => {
-                    e.currentTarget.style.color = "red";
-                    e.currentTarget.style.border = "2px solid red";
-                  }}
-                  onMouseOut={(e) => {
-                    e.currentTarget.style.color = "white";
-                    e.currentTarget.style.border = "2px solid white";
-                  }}
-                  onClick={(e) => handleDeleteEditingImageFiles(e, index)}
-                />
-                <img
-                  src={image.imagesByPaths}
-                  alt={`Image ${index + 1}`}
                   className="w-64 h-64 object-cover rounded"
-                />
+                >
+                  <IoCloseOutline
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      right: 0,
+                      cursor: "pointer",
+                      color: "white",
+                      fontWeight: "bold",
+                      fontSize: "50px",
+                      border: "2px solid white",
+                    }}
+                    onMouseOver={(e) => {
+                      e.currentTarget.style.color = "red";
+                      e.currentTarget.style.border = "2px solid red";
+                    }}
+                    onMouseOut={(e) => {
+                      e.currentTarget.style.color = "white";
+                      e.currentTarget.style.border = "2px solid white";
+                    }}
+                    onClick={(e) => handleImageIndexToDelete(e, index)}
+                  />
+                </div>
               </div>
             ))}
             {imageFiles?.map((file, index) => (
