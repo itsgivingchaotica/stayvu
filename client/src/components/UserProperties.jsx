@@ -78,7 +78,6 @@ const UserProperties = ({
 
   useEffect(() => {
     dispatch(fetchUserProperties({ userId: user?.id }));
-    console.log("FETCHING THE PROPERTIEs");
   }, []);
 
   return (
