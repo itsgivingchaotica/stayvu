@@ -98,21 +98,33 @@ const getImages = async (propertyId) => {
   }
 };
 
-const deleteImage = async (propertyId, imagepath) => {
+const deleteImage = async (propertyId, index) => {
   const storageFB = getStorage();
 
-  // Construct the full path to the file
-  const filePath = `images/${propertyId}/${imagepath}`;
-
-  // Get a reference to the file
-  const fileRef = ref(storageFB, filePath);
-
   try {
-    // Delete the file
-    await deleteObject(fileRef);
-    console.log(`Successfully deleted ${filePath}`);
+    // Get the list of images for the property
+    const images = await getImages(propertyId);
+
+    // Check if the index is valid
+    if (index >= 0 && index < images.length) {
+      // Construct the full path to the file
+      const imagePath = images[index];
+
+      // Get a reference to the file
+      const fileRef = ref(storageFB, imagePath);
+
+      // Delete the file
+      await deleteObject(fileRef);
+      console.log(
+        `Successfully deleted image at index ${index} for ${propertyId}`
+      );
+    } else {
+      console.error(`Invalid index: ${index}`);
+    }
   } catch (error) {
-    console.error(`Error deleting ${filePath}: ${error.message}`);
+    console.error(
+      `Error deleting image at index ${index} for ${propertyId}: ${error.message}`
+    );
   }
 };
 
